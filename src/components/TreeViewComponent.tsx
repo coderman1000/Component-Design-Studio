@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { ExpandMore, ChevronRight, Folder, InsertDriveFile } from '@mui/icons-material';
-import { List, ListItem, ListItemText, Collapse, IconButton, ListItemIcon } from '@mui/material';
+import { List, ListItem, ListItemText, Collapse, IconButton } from '@mui/material';
 
 const CustomTreeItem = ({ node, depth = 0 }) => {
     const [open, setOpen] = React.useState(false);
@@ -11,38 +11,17 @@ const CustomTreeItem = ({ node, depth = 0 }) => {
         setOpen(!open);
     };
 
-    const isFolder = Array.isArray(node.children);
-    const icon = isFolder ? <Folder /> : <InsertDriveFile />;
-
     return (
-        <div style={{ paddingLeft: depth * 16, transition: 'background-color 0.3s', backgroundColor: open ? '#f0f0f0' : 'transparent' }}>
-            <ListItem
-                button
-                onClick={handleToggle}
-                style={{
-                    borderRadius: '4px',
-                    marginBottom: '2px',
-                    padding: '8px',
-                    transition: 'background-color 0.3s, color 0.3s',
-                    backgroundColor: open ? '#e0e0e0' : '#fff',
-                    color: open ? '#000' : '#555',
-                    boxShadow: open ? '0 2px 5px rgba(0, 0, 0, 0.15)' : 'none',
-                    '&:hover': {
-                        backgroundColor: '#e8e8e8',
-                        color: '#000',
-                    },
-                }}
-            >
-                <ListItemIcon>
-                    {icon}
-                </ListItemIcon>
-                <ListItemText primary={node.name} />
+        <div style={{ paddingLeft: depth * 16 }}>
+            <ListItem button onClick={handleToggle}>
                 <IconButton>
                     {open ? <ExpandMore /> : <ChevronRight />}
                 </IconButton>
+                {Array.isArray(node.children) ? <Folder /> : <InsertDriveFile />}
+                <ListItemText primary={node.name} style={{ marginLeft: 8 }} />
             </ListItem>
             <Collapse in={open} timeout="auto" unmountOnExit>
-                {isFolder && (
+                {Array.isArray(node.children) && (
                     <List component="div" disablePadding>
                         {node.children.map((childNode) => (
                             <CustomTreeItem key={childNode.id} node={childNode} depth={depth + 1} />
@@ -56,7 +35,7 @@ const CustomTreeItem = ({ node, depth = 0 }) => {
 
 const TreeViewComponent = ({ folderStructure }) => {
     return (
-        <List style={{ padding: '10px', backgroundColor: '#f9f9f9', borderRadius: '8px', boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)' }}>
+        <List>
             {folderStructure.map((tree) => (
                 <CustomTreeItem key={tree.id} node={tree} />
             ))}
